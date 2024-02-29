@@ -2,14 +2,14 @@ import turtle
 import random
 import time
 
-colors = ["yellow", "gold", "orange", "red", "maroon", "violet", "magenta", "purple", "navy", "blue", "skyblue", "cyan", "turquoise", "lightgreen", "green", "darkgreen", "chocolate", "brown", "gray",]
 words = ['About', 'Alert', 'Argue', 'Also', 'Able', 'Acid' 'Hear', 'Beach', 'Fix', 'Own', 'Bed', 'Hen']
 chosen_word = random.choice(words)
 
+letters_dictionary = {}
 for letter in chosen_word:
-    globals()[f"letter_{letter}"] = letter
-
-    # variables[f'var{i}'] = i**2.
+    letter = letter.lower()
+    letters_dictionary[f"letter_{letter}"] = letter
+    print(f"letter_{letter}")
 
 
 
@@ -19,7 +19,6 @@ optionsTurtle = turtle.Turtle()
 optionsTurtle.speed(0)
 optionsTurtle.hideturtle()
 
-# 5 is to 200
 
 def drawButtons(x,y, text, fontsize, up):
     optionsTurtle.penup()
@@ -51,7 +50,7 @@ def drawOptions():
     # Write the directions for how to play
     optionsTurtle.penup()
     optionsTurtle.goto(0,45)
-    # optionsTurtle.write(f"In this game, you will have limited time to click as many turtles as you can\n                        After every turtle click, you will earn one point\n   Every time you click a turtle, it will stamp and move to a new location\n                                                    Good Luck!", align="center", font=("Calibri", 12, "bold"))
+    # optionsTurtle.write(f"                                                                In this game,\nyou must guess the hidden word one letter at a time before the full body\nis drawn out\n                        After every turtle click, you will earn one point\n   Every time you click a turtle, it will stamp and move to a new location\n                                                    Good Luck!", align="center", font=("Calibri", 12, "bold"))
 
     # Draw "Play" button
     optionsTurtle.pencolor("black")
