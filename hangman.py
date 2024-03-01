@@ -1,3 +1,5 @@
+from datetime import date, datetime
+# import datetime
 from tkinter import messagebox
 import turtle
 import random
@@ -40,6 +42,7 @@ words = [
 
 # words = ['Mahdi Salloum']
 chosen_word = random.choice(words)
+print(chosen_word)
 chosen_word_length = len(chosen_word)
 
 correctly_guessed_letters = []
@@ -235,7 +238,12 @@ def inGameDecider(x,y):
             total_guesses += 1
             get_input_with_limit("Guess", "Guess a letter!", 1)
 
-            # print("You entered:", input_text)
+# Post-game click decider for post-game buttons
+def postGameDecider(x,y):
+    if -225 < x < -125:
+        if 200 < y < 237.5:
+            # Close the screen
+            screen.bye()
 
 # In this function, call all the functions that draw the needed graphics
 def decider(x,y):
@@ -253,7 +261,10 @@ def decider(x,y):
 
         elif -140 < y < -65:
             # Open the scores notepad
-            pass
+            try:
+                os.system('start scores.txt')
+            except:
+                messagebox.showinfo('Error', "You have not played any games yet.\nClick play to begin!")    
         elif -230 < y < -155:
             # Close the screen
             screen.bye()
@@ -349,6 +360,14 @@ def gameLost():
     turtle.penup()
     turtle.goto(0,-65)
     # turtle.write(f"(Click anywhere to go back home)", align="center", font=("Calibri", 12, "bold"))
+    screen.onscreenclick(postGameDecider)
+    file = open("scores.txt", "a")
+    today = date.today()
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+
+    file.write(f"Date Played: Date Played: {today} @ {current_time}\nGame Lost -- Word to guess: {chosen_word} -- Number of Guesses: {total_guesses}\n{'-'*60}\n")
+    file.close()
 
 def gameWon():
     turtle.speed(0)
@@ -378,6 +397,14 @@ def gameWon():
     turtle.penup()
     turtle.goto(0,-65)
     # turtle.write(f"(Click anywhere to go back home)", align="center", font=("Calibri", 12, "bold"))
+    screen.onscreenclick(postGameDecider)
+    file = open("scores.txt", "a")
+    today = date.today()
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+
+    file.write(f"Date Played: {today} @ {current_time}\nGame Won -- Word to guess: {chosen_word} -- Number of Guesses: {total_guesses}\n{'-'*60}\n")
+    file.close()
 
 # Track the number of incorrect guesses
 incorrect = -1
@@ -424,6 +451,7 @@ def playGame(input):
             if len(correctly_guessed_letters) == len(set(letters_list)):
                 # print(f'YOU FINISHED THE GAME IN {total_guesses} GUESSES')
                 gameWon()
+                
         else:
             incorrectly_guessed_letters.append(input)
             incorrect += 1
