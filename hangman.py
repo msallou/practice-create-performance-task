@@ -1,6 +1,10 @@
+from tkinter import messagebox
 import turtle
 import random
 import time
+import os
+
+os.system('cls')
 
 screen = turtle.Screen()
 screen.setup(500, 500)
@@ -24,20 +28,33 @@ optionsTurtle = turtle.Turtle()
 optionsTurtle.speed(0)
 optionsTurtle.hideturtle()
 
-words = ['About', 'Alert', 'Argue', 'Also', 'Able', 'Acid' 'Hear', 'Beach', 'Fix', 'Own', 'Bed', 'Hen']
+words = [
+    "cat", "dog", "run", "sun", "hat", "man", "fan", "ice", "red", "pen",
+    "book", "ball", "frog", "duck", "lamp", "cake", "bell", "door", "snake", "beach",
+    "apple", "chair", "table", "water", "house", "music", "happy", "grass", "ocean", "sunny",
+    "glove", "lemon", "queen", "shoes", "watch", "fence", "sword", "storm", "ghost", "beard",
+    "fairy", "frank", "candy", "earth", "beard", "kite", "zebra", "snake", "frank", "queen",
+    "giant", "clock", "money", "piano", "juice", "santa", "puzzle", "summer", "orange", "rocket",
+    "cookie", "banana", "purple", "sponge", "guitar", "jacket", "rocket", "rocket", "rocket"
+]
+
+# words = ['Mahdi Salloum']
 chosen_word = random.choice(words)
 chosen_word_length = len(chosen_word)
 
-letters_dictionary = {}
+correctly_guessed_letters = []
+incorrectly_guessed_letters = []
+letters_list = []
 for letter in chosen_word:
     letter = letter.lower()
-    letters_dictionary[f"letter_{letter}"] = letter
+    letters_list.append(letter)
     # print(f"letter_{letter}")
 
 class Body():
     def drawHead(self):
         game_turtle.penup()
-        game_turtle.goto(-11.5, 100)
+        game_turtle.goto(-0.5, 90)
+        game_turtle.setheading(0)
         game_turtle.pendown()     
         game_turtle.circle(13, 360)
     def drawBody(self):
@@ -71,42 +88,30 @@ class Body():
         game_turtle.pendown()
         game_turtle.forward(35)
 
-class BodyOutline():
-    def drawHead(self):
-        game_turtle.penup()
-        game_turtle.goto(-12.5, 105)
-        game_turtle.pendown()     
-        game_turtle.circle(13, 360)
-    def drawBody(self):
-        game_turtle.penup()
-        game_turtle.goto(0, 90)
-        game_turtle.setheading(270)
-        game_turtle.pendown()
-        game_turtle.forward(75)
-    def drawLeftArm(self):
-        game_turtle.penup()
-        game_turtle.goto(0, 70)
-        game_turtle.setheading(220)
-        game_turtle.pendown()
-        game_turtle.forward(35)
-    def drawRightArm(self):
-        game_turtle.penup()
-        game_turtle.goto(0, 70)
-        game_turtle.setheading(320)
-        game_turtle.pendown()
-        game_turtle.forward(35)
-    def drawLeftLeg(self):
-        game_turtle.penup()
-        game_turtle.goto(0, 15)
-        game_turtle.setheading(240)
-        game_turtle.pendown()
-        game_turtle.forward(35)
-    def drawRightLeg(self):
-        game_turtle.penup()
-        game_turtle.goto(0, 15)
-        game_turtle.setheading(300)
-        game_turtle.pendown()
-        game_turtle.forward(35)
+def flashBodyPart(turtle, function):
+    screen.onscreenclick(None)
+    turtle.color('black')
+    function()
+    time.sleep(0.05)
+    turtle.color('red')
+    function()
+    time.sleep(0.05)
+    turtle.color('black')
+    function()
+    time.sleep(0.05)
+    turtle.color('red')
+    function()
+    time.sleep(0.05)
+    turtle.color('black')
+    function()
+    time.sleep(0.05)
+    turtle.color('red')
+    function()
+    time.sleep(0.05)
+    turtle.color('black')
+    function()
+    time.sleep(0.05)
+    screen.onscreenclick(inGameDecider)
 
 def drawHomepageGraphic():
     # Draw hanging arm
@@ -207,13 +212,30 @@ def drawOptions():
     drawButtons(x=-100, y=-140, text="View History", fontsize=25, up=17)
     drawButtons(x=-100, y=-230, text="Exit", fontsize=35, up=10)
 
-    # drawHomepageGraphic()
+    drawHomepageGraphic()
 
+def get_input_with_limit(title, prompt, length_requirement):
+    user_input = screen.textinput(title, prompt)
+    try:
+        while len(user_input) > length_requirement or len(user_input) < length_requirement:
+            user_input = screen.textinput(title, f"Please enter a valid input\nIt should be {length_requirement} letter")
+        playGame(user_input)
+    except:
+        pass
+
+# In-game click decider for in-game buttons
 def inGameDecider(x,y):
     if -225 < x < -125:
         if 200 < y < 237.5:
             # Close the screen
             screen.bye()
+    if -100 < x < 100:
+        if -125 < y < -50:
+            global total_guesses
+            total_guesses += 1
+            get_input_with_limit("Guess", "Guess a letter!", 1)
+
+            # print("You entered:", input_text)
 
 # In this function, call all the functions that draw the needed graphics
 def decider(x,y):
@@ -226,6 +248,9 @@ def decider(x,y):
             drawExitButton()
             drawLetterSpaces()
             drawStand()
+            playGame(None)
+            # print(letters_list)
+
         elif -140 < y < -65:
             # Open the scores notepad
             pass
@@ -236,17 +261,17 @@ def decider(x,y):
 # Draw the letter spaces
 def drawLetterSpaces():
     # letter_spaces.goto(-200, -150) # -200 on x-axis for a 5-letter word
-    letter_spaces.goto(-(chosen_word_length*40), -150)
+    letter_spaces.goto(-(chosen_word_length*40), -190)
     for letter in chosen_word:
         time.sleep(0.05)
         # Draw line
         letter_spaces.pendown()
         letter_spaces.forward(50)
         # Write letter - REMOVE THIS LATER
-        letter_spaces.penup()
-        letter_spaces.backward(25)
-        letter_spaces.write(letter.upper(), move=False, align='center', font=('Calibri', 25, 'bold'))
-        letter_spaces.forward(25)
+        # letter_spaces.penup()
+        # letter_spaces.backward(25)
+        # letter_spaces.write(letter.upper(), move=False, align='center', font=('Calibri', 25, 'bold'))
+        # letter_spaces.forward(25)
         # Move forward
         letter_spaces.penup()
         letter_spaces.forward(35)
@@ -284,27 +309,143 @@ def drawStand():
     game_turtle.pendown()
     game_turtle.forward(30)
 
-    game_turtle.color(230/255, 230/255, 230/255)  # Gray color (RGB values scaled to 0-1 range)
-    body = BodyOutline()
+
+    # Draw outline
+    game_turtle.color(240/255, 240/255, 240/255)  # Gray color (RGB values scaled from 0 to 1)
+    # game_turtle.color('black')
+    body = Body()
     body.drawHead()
     body.drawBody()
     body.drawLeftArm()
     body.drawRightArm()
     body.drawLeftLeg()
     body.drawRightLeg()
-    
-    # THIS DRAWS THE ACTUAL BODY, JUST FOR TESTING
-    # REMOVE WHEN YOU START WITH THE PROGRAM
-    game_turtle.color('black')
-    # game_turtle.speed(8)
-    body2 = Body()
-    body2.drawHead()
-    body2.drawBody()
-    body2.drawLeftArm()
-    body2.drawRightArm()
-    body2.drawLeftLeg()
-    body2.drawRightLeg()
 
+def gameLost():
+    turtle.speed(0)
+    turtle.hideturtle()
+    turtle.setheading(0)
+    turtle.penup()
+    turtle.goto(-200,-65)
+    turtle.pencolor("black")
+    turtle.width(5)
+    turtle.fillcolor("yellow")
+    turtle.pendown()
+    turtle.begin_fill()
+    for i in range(2):
+        turtle.forward(400)
+        turtle.left(90)
+        turtle.forward(150)
+        turtle.left(90)
+    turtle.end_fill()
+    turtle.penup()
+    turtle.goto(0,0)
+    turtle.pendown()
+    turtle.write("Game's Over!", align="center", font=("Calibri", 50, "bold"))
+    turtle.penup()
+    turtle.goto(0,-50)
+    turtle.pendown()
+    turtle.write(f"     Total Guesses: {total_guesses}\nCorrect Word: {chosen_word}", align="center", font=("Calibri", 20, "bold"))
+    turtle.penup()
+    turtle.goto(0,-65)
+    # turtle.write(f"(Click anywhere to go back home)", align="center", font=("Calibri", 12, "bold"))
+
+def gameWon():
+    turtle.speed(0)
+    turtle.hideturtle()
+    turtle.setheading(0)
+    turtle.penup()
+    turtle.goto(-200,-65)
+    turtle.pencolor("black")
+    turtle.width(5)
+    turtle.fillcolor("yellow")
+    turtle.pendown()
+    turtle.begin_fill()
+    for i in range(2):
+        turtle.forward(400)
+        turtle.left(90)
+        turtle.forward(150)
+        turtle.left(90)
+    turtle.end_fill()
+    turtle.penup()
+    turtle.goto(0,0)
+    turtle.pendown()
+    turtle.write("You Won!", align="center", font=("Calibri", 50, "bold"))
+    turtle.penup()
+    turtle.goto(0,-50)
+    turtle.pendown()
+    turtle.write(f"     Total Guesses: {total_guesses}", align="center", font=("Calibri", 20, "bold"))
+    turtle.penup()
+    turtle.goto(0,-65)
+    # turtle.write(f"(Click anywhere to go back home)", align="center", font=("Calibri", 12, "bold"))
+
+# Track the number of incorrect guesses
+incorrect = -1
+total_guesses = 0
+
+def playGame(input):
+    global incorrect
+    body = Body()
+    game_turtle.color('black')
+
+    input = str(input).lower()
+    drawButtons(x=-100, y=-125, text="Take a Guess!", fontsize=20, up=20)
+
+    # Check if the guessed letter has already been guessed
+    if input in correctly_guessed_letters:
+        messagebox.showinfo("Error!", "You already guessed this letter")
+    elif input in incorrectly_guessed_letters:
+        messagebox.showinfo("Error!", "You already guessed this letter")
+
+    else:
+        # Tracker to track if the guessed letter is found in the word
+        found_letter = False
+
+
+        # Loop through each letter in the word
+        # the 'index' will give you what positoin the letter in the word  is
+        for index, letter in enumerate(chosen_word):
+            if letter.lower() == input:
+                found_letter = True
+
+                # Write the guessed letter in the corresponding space
+                letter_spaces.goto(-(chosen_word_length*40) + (index * 85), -190)
+                letter_spaces.penup()
+                letter_spaces.forward(25)
+                letter_spaces.write(input.upper(), move=False, align='center', font=('Calibri', 25, 'bold'))
+
+        # If the guessed letter was found in the word
+        if found_letter:
+            # Add the guessed letter to the list of guessed letters
+            correctly_guessed_letters.append(input)
+            # print(correctly_guessed_letters)
+
+            # If all letters have been guessed, end the game
+            if len(correctly_guessed_letters) == len(set(letters_list)):
+                # print(f'YOU FINISHED THE GAME IN {total_guesses} GUESSES')
+                gameWon()
+        else:
+            incorrectly_guessed_letters.append(input)
+            incorrect += 1
+            if incorrect == 1:
+                body.drawHead()
+                flashBodyPart(game_turtle, body.drawHead)
+            if incorrect == 2:
+                body.drawBody()
+                flashBodyPart(game_turtle, body.drawBody)
+            if incorrect == 3:
+                body.drawLeftArm()
+                flashBodyPart(game_turtle, body.drawLeftArm)
+            if incorrect == 4:
+                body.drawRightArm()
+                flashBodyPart(game_turtle, body.drawRightArm)
+            if incorrect == 5:
+                body.drawLeftLeg()
+                flashBodyPart(game_turtle, body.drawLeftLeg)
+            if incorrect == 6:
+                body.drawRightLeg()
+                flashBodyPart(game_turtle, body.drawRightLeg)
+                gameLost()
 
 
 drawOptions()
